@@ -5,14 +5,13 @@ import {
   FlatList,
   TouchableOpacity,
   TextInput,
-} from "react-native"; // Import necessary components from React Native
-import React, { useState } from "react"; // Import React and useState hook
-import task from "../assets/task"; //This brings the task class
+} from "react-native";
+import React, { useState, useCallback, useMemo } from "react";
+import task from "../assets/task";
 
 export default function ToDo() {
-  console.log("ToDo component rendered"); // Log message to console when the component is rendered
+  console.log("ToDo component rendered");
 
-  // State variables to manage different task categories
   const [tasks, setTasks] = useState([]);
   const [completed, setCompleted] = useState([]);
   const [toDo, setToDo] = useState([]);
@@ -22,7 +21,6 @@ export default function ToDo() {
   const [showMenu, setShowMenu] = useState(false);
   const [taskInput, setTaskInput] = useState("");
 
-  // Object to store task categories and their properties
   const navItem = {
     Complete: { value: completed.length, color: "green" },
     ToDo: { value: toDo.length, color: "blue" },
@@ -30,27 +28,31 @@ export default function ToDo() {
     Wait: { value: wait.length, color: "purple" },
   };
 
-  // Convert navItem object to an array for FlatList data
-  const navItemArray = Object.keys(navItem).map((key) => ({
-    key,
-    value: navItem[key].value,
-    color: navItem[key].color,
-  }));
+  const navItemArray = useMemo(
+    () =>
+      Object.keys(navItem).map((key) => ({
+        key,
+        value: navItem[key].value,
+        color: navItem[key].color,
+      })),
+    [completed, toDo, progress, wait]
+  );
 
-  // Handles when menu is pressed
   const handlePress = () => {
     setShowMenu(!showMenu);
   };
 
-  // Handles when a task is added
-const addTask = () => {
-  setTasks([...tasks, taskInput]);
-  setTaskInput('');
-};
+  const addTask = useCallback(() => {
+    if (taskInput != '') {
+        setTasks((prevTasks) => [...prevTasks, taskInput]);
+        setTaskInput("");
+        console.log(tasks);
+    } else {
+        alert('Must add task');
+    }
 
+  }, [taskInput]);
 
-  console.log(tasks);
-  // Component to render each item in the FlatList
   const Item = ({ item }) => (
     <View style={styles.itemContainer}>
       <Text style={styles.item}>{item.key}</Text>
@@ -60,14 +62,13 @@ const addTask = () => {
     </View>
   );
 
-  // Component to render the menu
   const Menu = () => (
     <View style={styles.menuContainer}>
       <TextInput
-        onChangeText={newInput => setTaskInput(newInput)}
-        value={taskInput}
         style={styles.input}
         placeholder="Enter task"
+        // value={taskInput}
+        // onChangeText={(text) => setTaskInput(text)}
       />
       <TouchableOpacity style={styles.addButton} onPress={addTask}>
         <Text style={styles.addButtonText}>Add Task</Text>
@@ -98,14 +99,12 @@ const addTask = () => {
   );
 }
 
-// Styles for the components
 const styles = StyleSheet.create({
   container: {
     display: "flex",
     marginTop: 20,
     padding: 20,
   },
-
   nav: {
     display: "flex",
     flexDirection: "row",
@@ -114,7 +113,6 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     width: "95%",
   },
-
   menuContainer: {
     padding: 20,
     borderRadius: 10,
@@ -122,7 +120,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-
   input: {
     flex: 1,
     height: 40,
@@ -132,31 +129,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginRight: 10,
   },
-
   addButton: {
     backgroundColor: "#007bff",
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
   },
-
   addButtonText: {
     color: "white",
     fontWeight: "bold",
   },
-
   title: {
     fontSize: 29,
     marginTop: 12,
     marginLeft: 12,
   },
-
   add: {
     fontSize: 14,
     marginTop: 12,
     marginLeft: 12,
   },
-
   itemContainer: {
     backgroundColor: "white",
     display: "flex",
@@ -170,12 +162,10 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 20,
   },
-
   item: {
     display: "flex",
     marginRight: 9,
   },
-
   itemInt: {
     alignItems: "center",
     justifyContent: "center",
@@ -184,11 +174,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     borderRadius: 15,
   },
-
   font: {
     color: "white",
   },
-
   list: {
     display: "flex",
     flexDirection: "row",
