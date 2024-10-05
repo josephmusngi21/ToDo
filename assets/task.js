@@ -1,13 +1,15 @@
 // This class will be in charge of storing everything we need from the tasks
 
 class Task{
-    constructor(task, date, type) {
-        // task = []
+    constructor(task, date, type, tags) {
+        // task = str
         // date = int
         // type = str
+        // tags = []
         this.task = task;
         this.date = date;
         this.type = type;
+        this.type = tags;
     }
 
     get showTask() {
@@ -22,6 +24,15 @@ class Task{
 
     get showType() {
         // Returns type 
-        return this.type
+        return this.type;
+    }
+
+    showTags(index) {
+        // Returns tags
+        return this.tags[index];
+    }
+
+    get showAllTags() {
+        return this.tags;
     }
 }
