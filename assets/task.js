@@ -1,5 +1,5 @@
 export default class Task {
-    constructor(task, date, type='Progress', tags = ['']) {
+    constructor(task='', date, type='Progress', tags = ['']) {
       this.task = task;
       this.date = date;
       this.type = type;

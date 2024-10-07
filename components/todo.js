@@ -79,6 +79,7 @@ export default function ToDo() {
           taskInput={taskInput}
           setTaskInput={setTaskInput}
           addTask={addTask}
+          tasks={tasks}
         />
       ) : (
         <Text> Nothing to see here</Text>
