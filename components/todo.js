@@ -1,3 +1,12 @@
+//  TODO:
+//  Move files to separate Files
+//
+//
+//
+//
+//
+//
+
 import {
   View,
   Text,
@@ -7,7 +16,7 @@ import {
   TextInput,
 } from "react-native";
 import React, { useState, useCallback, useMemo } from "react";
-import Task from "../assets/task";
+import Menu from "../assets/Menu";
 
 export default function ToDo() {
   console.log("ToDo component rendered");
@@ -45,27 +54,9 @@ export default function ToDo() {
     setShowMenu(!showMenu);
   };
 
-  const addTask = useCallback(() => {
-    // Adds task using Task class object
-    //   constructor(task, date, type) {
-    // task = str
-    // date = int
-    // type = str
-    // tags = []
-    //     this.task = task;
-    //     this.date = date;
-    //     this.type = type;
-    //     this.tags = tags;
-    // }
-    if (taskInput.trim() !== "") {
-      const newTask = new Task(taskInput, new Date(), "ToDo");
-      setTasks([...tasks, newTask]);
-      console.log(tasks);
-      setTaskInput("");
-    } else {
-      alert("Must add task");
-    }
-  }, [taskInput, tasks]);
+  const taskToObject = () => {
+    // Will convert to task object
+  };
 
   const Item = ({ item }) => (
     <View style={styles.itemContainer}>
@@ -76,29 +67,14 @@ export default function ToDo() {
     </View>
   );
 
-  const Menu = () => (
-    //? Transfer to seperate file
-    <View style={styles.menuContainer}>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter task"
-        value={taskInput}
-        onChangeText={(input) => setTaskInput(input)}
-      />
-      <TouchableOpacity style={styles.addButton} onPress={addTask}>
-        <Text style={styles.addButtonText}>Add Task</Text>
-      </TouchableOpacity>
-    </View>
-  );
-
   const taskBox = (taskText) => {
     //TODO: Need to add styling
-    //? Transfer to seperate file
+    //? Transfer to seperate file?
     // Shows the tasks including the task, tags and when it was set
-    // taskTesk is a object from task.js
-      const taskName = taskText.showtask(); 
-      const tags = taskText.showAllTags();
-      const date = taskText.showDate();
+    // taskTask is a object from task.js
+    const taskName = taskText.showtask();
+    const tags = taskText.showAllTags();
+    const date = taskText.showDate();
 
     return (
       <View style={styles.taskContainer}>
@@ -110,10 +86,10 @@ export default function ToDo() {
         </View>
 
         <View style={styles.tags}>
-          <FlatList 
-          data={tags}
-            renderItem={'pass'}
-            keyExtractor={'pass'}
+          <FlatList
+            data={tags}
+            renderItem={"pass"}
+            keyExtractor={"pass"}
             horizontal={true}
           />
         </View>
@@ -134,7 +110,17 @@ export default function ToDo() {
         </TouchableOpacity>
       </View>
 
-      {showMenu ? Menu() : <Text> Nothing to see here</Text>}
+      {/* {showMenu ? Menu() : <Text> Nothing to see here</Text>} */}
+      {showMenu ? (
+        <Menu
+          taskInput={taskInput}
+          setTaskInput={setTaskInput}
+          tasks={tasks}
+          setTasks={setTasks}
+        />
+      ) : (
+        <Text> Nothing to see here</Text>
+      )}
 
       <View style={styles.list}>
         <FlatList

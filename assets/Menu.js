@@ -1,34 +1,42 @@
-import React, {useCallback} from "react";
-import { View, StyleSheet, TextInput, TouchableOpacity, Text } from "react-native";
-export default function Menu(taskInput, setTaskInput) {
+import React, { useCallback } from "react";
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Text,
+} from "react-native";
+import Task from "./task";
 
-    const addTask = useCallback(() => {
-        if (taskInput != '') {
-            setTasks([...tasks, taskInput]);
-            console.log(tasks);
-        } else {
-            alert('Must add task');
-        }
-    
-      }, [taskInput]);
+export default function Menu({ taskInput, setTaskInput, setTasks, tasks }) {
+  const addTask = useCallback(() => {
+    if (taskInput.trim() !== "") {
+      const newTask = new Task(taskInput, new Date(), "Progress");
+      console.log(newTask.toString());
+      setTasks([...tasks, newTask]);
+      setTaskInput("");
+    } else {
+      alert("Must add task");
+    }
+  }, [taskInput, tasks, setTasks, setTaskInput]);
 
-    return(
-        <View style={styles.menuContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter task"
-            value={taskInput}
-            onChangeText={(input) => setTaskInput(input)}
-          />
-          <TouchableOpacity style={styles.addButton} onPress={addTask}>
-            <Text style={styles.addButtonText}>Add Task</Text>
-          </TouchableOpacity>
-        </View>
-      );
-};
+  return (
+    <View style={styles.menuContainer}>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter task"
+        value={taskInput}
+        onChangeText={(input) => setTaskInput(input)}
+      />
+      <TouchableOpacity style={styles.addButton} onPress={addTask}>
+        <Text style={styles.addButtonText}>Add Task</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
-    menuContainer: {
+  menuContainer: {
     padding: 20,
     borderRadius: 10,
     marginVertical: 10,
@@ -54,4 +62,4 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
-})
+});

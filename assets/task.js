@@ -1,38 +1,32 @@
-// This class will be in charge of storing everything we need from the tasks
-
-class Task{
-    constructor(task, date, type, tags) {
-        // task = str
-        // date = int
-        // type = str
-        // tags = []
-        this.task = task;
-        this.date = date;
-        this.type = type;
-        this.type = tags;
+export default class Task {
+    constructor(task, date, type='Progress', tags = [null]) {
+      this.task = task;
+      this.date = date;
+      this.type = type;
+      this.tags = tags;
     }
-
+  
     get showTask() {
-        // Returns task
-        return this.task;
+      return this.task;
     }
-
+  
     get showDate() {
-        // Returns Date
-        return this.date;
+      return this.date;
     }
-
+  
     get showType() {
-        // Returns type 
-        return this.type;
+      return this.type;
     }
-
+  
     showTags(index) {
-        // Returns tags
-        return this.tags[index];
+      return this.tags[index];
+    }
+  
+    get showAllTags() {
+      return this.tags;
     }
 
-    get showAllTags() {
-        return this.tags;
+    toString() {
+        return `\ntask: ${this.task}\n date: ${this.date}\n type:${this.type}\n tags:${this.tags}`;
     }
 }
