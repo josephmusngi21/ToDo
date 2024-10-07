@@ -9,6 +9,7 @@ import {
 import Task from "./task";
 
 export default function Menu({ taskInput, setTaskInput, setTasks, tasks }) {
+  console.log('in Menu.js')
   const addTask = useCallback(() => {
     if (taskInput.trim() !== "") {
       const newTask = new Task(taskInput, new Date(), "Progress");

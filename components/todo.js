@@ -1,22 +1,14 @@
-//  TODO:
-//  Move files to separate Files
-//
-//
-//
-//
-//
-//
-
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  TextInput,
 } from "react-native";
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import Menu from "../assets/Menu";
+import TaskBox from "../assets/TaskBox";
+import Task from "../assets/task"; // Make sure this import is correct
 
 export default function ToDo() {
   console.log("ToDo component rendered");
@@ -26,11 +18,10 @@ export default function ToDo() {
   const [toDo, setToDo] = useState([]);
   const [progress, setProgress] = useState([]);
   const [wait, setWait] = useState([]);
-
   const [showMenu, setShowMenu] = useState(false);
-  const [taskInput, setTaskInput] = useState();
+  const [taskInput, setTaskInput] = useState("");
 
-  const date = Date();
+  const date = new Date();
   console.log(date);
 
   const navItem = {
@@ -54,8 +45,15 @@ export default function ToDo() {
     setShowMenu(!showMenu);
   };
 
-  const taskToObject = () => {
-    // Will convert to task object
+  const addTask = () => {
+    if (taskInput.trim() !== "") {
+      const newTask = new Task(taskInput, new Date(), "ToDo", []);
+      console.log("New task created:", newTask); // Log the new task
+      setTasks([...tasks, newTask]);
+      setTaskInput("");
+    } else {
+      alert("Must add task");
+    }
   };
 
   const Item = ({ item }) => (
@@ -67,40 +65,6 @@ export default function ToDo() {
     </View>
   );
 
-  const taskBox = (taskText) => {
-    //TODO: Need to add styling
-    //? Transfer to seperate file?
-    // Shows the tasks including the task, tags and when it was set
-    // taskTask is a object from task.js
-    const taskName = taskText.showtask();
-    const tags = taskText.showAllTags();
-    const date = taskText.showDate();
-
-    return (
-      <View style={styles.taskContainer}>
-        <View style={styles.taskNav}>
-          <Text>{taskName}</Text>
-          <TouchableOpacity style={styles.menu}>
-            <Text>Menu</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.tags}>
-          <FlatList
-            data={tags}
-            renderItem={"pass"}
-            keyExtractor={"pass"}
-            horizontal={true}
-          />
-        </View>
-
-        <View style={styles.footer}>
-          <Text>{date}</Text>
-        </View>
-      </View>
-    );
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.nav}>
@@ -110,13 +74,11 @@ export default function ToDo() {
         </TouchableOpacity>
       </View>
 
-      {/* {showMenu ? Menu() : <Text> Nothing to see here</Text>} */}
       {showMenu ? (
         <Menu
           taskInput={taskInput}
           setTaskInput={setTaskInput}
-          tasks={tasks}
-          setTasks={setTasks}
+          addTask={addTask}
         />
       ) : (
         <Text> Nothing to see here</Text>
@@ -129,6 +91,20 @@ export default function ToDo() {
           keyExtractor={(item) => item.key}
           horizontal={true}
         />
+      </View>
+
+      <View style={styles.taskList}>
+        {tasks.length > 0 ? (
+          <FlatList
+            data={tasks}
+            renderItem={({ item }) => (
+              <TaskBox taskText={item} key={item.showTask()} />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        ) : (
+          <Text>No tasks added yet</Text>
+        )}
       </View>
     </View>
   );
