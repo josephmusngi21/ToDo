@@ -82,11 +82,11 @@ export default function ToDo() {
           addTask={addTask}
           tasks={tasks}
           setTasks={setTasks}
-          descriptionInput={descriptionInput} //Added
-          setDescriptionInput={setDescriptionInput} //Added
+          descriptionInput={descriptionInput}
+          setDescriptionInput={setDescriptionInput}
         />
       ) : (
-        <Text></Text>
+        <View></View>
       )}
 
       <View style={styles.list}>
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginVertical: 20,
+    marginVertical: 15,
     width: "95%",
   },
   menuContainer: {

@@ -58,13 +58,13 @@ const styles = StyleSheet.create({
         marginVertical: 3,
     },
     taskInput: {
-        flex: 1,
-        height: 40, // Fixed height for task input
+        flex: 1.5,
+        height: 40, 
     },
     descriptionInput: {
         flex: 2,
         height: 80,
-        textAlignVertical: 'top', // Align text at the top of the input field
+        textAlignVertical: 'top', 
     },
     addButton: {
         backgroundColor: "#007bff",
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     inputContainer: {
-        height: 140,
+        height: 105,
         width: "75%",
         flexDirection: "column",
         justifyContent: "space-between",

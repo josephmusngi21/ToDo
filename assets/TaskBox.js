@@ -1,10 +1,20 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, FlatList, TextInput, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  TextInput,
+  StyleSheet,
+  ScrollView
+} from "react-native";
 
 export default function TaskBox({ taskText }) {
   const [tags, setTags] = useState(taskText?.showAllTags() || []);
   const [showInput, setShowInput] = useState(false);
   const [newTag, setNewTag] = useState("");
+  const [lastPressed, setLastPressed] = useState({ tag: "", time: 0 });
+
   const taskName = taskText?.showTask() || "No Task";
   const date = taskText?.showDate() || new Date().toString();
   const description = taskText?.showDescription() || "No Description";
@@ -17,10 +27,21 @@ export default function TaskBox({ taskText }) {
     setShowInput(!showInput);
   };
 
+  const handleTagPress = (tag) => {
+    const now = Date.now();
+    if (lastPressed.tag === tag && now - lastPressed.time < 300) {
+      // Remove the tag if pressed twice within 300ms
+      setTags(tags.filter(t => t !== tag));
+    } else {
+      // Update last pressed tag and timestamp
+      setLastPressed({ tag, time: now });
+    }
+  };
+
   const normalTag = (item) => (
-    <View style={styles.tagBubble}>
+    <TouchableOpacity style={styles.tagBubble} onPress={() => handleTagPress(item)}>
       <Text style={styles.tagText}>{item}</Text>
-    </View>
+    </TouchableOpacity>
   );
 
   const button = () =>

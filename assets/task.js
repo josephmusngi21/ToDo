@@ -4,7 +4,7 @@ export default class Task {
       this.date = date;
       this.type = type;
       this.tags = tags;
-      this.description = description; // Ensure description is assigned properly
+      this.description = description;
   }
 
   showTask() {
@@ -12,7 +12,17 @@ export default class Task {
   }
 
   showDate() {
-      return this.date.toString();
+      const dateOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+      const formattedDate = this.date.toLocaleDateString('en-US', dateOptions);
+
+      const hours = this.date.getHours();
+      const minutes = this.date.getMinutes();
+      const period = hours >= 12 ? 'PM' : 'AM';
+      const formattedHours = hours % 12 || 12; // Converts 0 to 12 for midnight
+      const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+      const formattedTime = `${formattedHours}:${formattedMinutes} ${period}`;
+
+      return `${formattedDate}, ${formattedTime}`;
   }
 
   showType() {
@@ -32,6 +42,6 @@ export default class Task {
   }
 
   toString() {
-      return `task: ${this.task}, date: ${this.date}, type: ${this.type}, tags: ${this.tags}, description: ${this.description}`;
+      return `task: ${this.task}, date and time: ${this.showDate()}, type: ${this.type}, tags: ${this.tags}, description: ${this.description}`;
   }
 }
