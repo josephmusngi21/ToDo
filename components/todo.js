@@ -20,6 +20,7 @@ export default function ToDo() {
   const [wait, setWait] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
   const [taskInput, setTaskInput] = useState("");
+  const [descriptionInput, setDescriptionInput] = useState('');
 
   const date = new Date();
   console.log(date);
@@ -47,7 +48,7 @@ export default function ToDo() {
 
   const addTask = () => {
     if (taskInput.trim() !== "") {
-      const newTask = new Task(taskInput, new Date(), "ToDo", []);
+      const newTask = new Task(taskInput, new Date(), "ToDo", [], descriptionInput);
       console.log("New task created:", newTask); // Log the new task
       setTasks([...tasks, newTask]);
       setTaskInput("");
@@ -70,7 +71,7 @@ export default function ToDo() {
       <View style={styles.nav}>
         <Text style={styles.title}>Task List</Text>
         <TouchableOpacity onPress={handlePress}>
-          <Text style={[styles.add]}>Menu</Text>
+          <Text style={[styles.add]}>Add Task</Text>
         </TouchableOpacity>
       </View>
 
@@ -80,9 +81,12 @@ export default function ToDo() {
           setTaskInput={setTaskInput}
           addTask={addTask}
           tasks={tasks}
+          setTasks={setTasks}
+          descriptionInput={descriptionInput} //Added
+          setDescriptionInput={setDescriptionInput} //Added
         />
       ) : (
-        <Text> Nothing to see here</Text>
+        <Text></Text>
       )}
 
       <View style={styles.list}>
