@@ -1,14 +1,9 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Ensure correct import
 import Menu from "../assets/Menu";
 import TaskBox from "../assets/TaskBox";
-import Task from "../assets/task"; // Make sure this import is correct
+import Task from "../assets/task";
 
 export default function ToDo() {
   console.log("ToDo component rendered");
@@ -21,15 +16,51 @@ export default function ToDo() {
   const [showMenu, setShowMenu] = useState(false);
   const [taskInput, setTaskInput] = useState("");
   const [descriptionInput, setDescriptionInput] = useState('');
+  const [selectedItem, setSelectedItem] = useState(null);
 
-  const date = new Date();
-  console.log(date);
+  useEffect(() => {
+    loadTasks();
+  }, []);
+
+  const saveTasks = async (tasks) => {
+    try {
+      const jsonValue = JSON.stringify(tasks);
+      await AsyncStorage.setItem('tasks', jsonValue);
+      console.log("Tasks saved: ", jsonValue);
+      logAllStoredTasks();
+    } catch (e) {
+      console.error("Error saving tasks:", e);
+    }
+  };
+
+  const loadTasks = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('tasks');
+      console.log("Tasks loaded from storage: ", jsonValue); 
+      if (jsonValue != null) {
+        const loadedTasks = JSON.parse(jsonValue);
+        console.log("Parsed loaded tasks: ", loadedTasks);
+        setTasks(loadedTasks);
+      }
+    } catch (e) {
+      console.error("Error loading tasks:", e);
+    }
+  };
+
+  const logAllStoredTasks = async () => {
+    try {
+      const allTasks = await AsyncStorage.getItem('tasks');
+      console.log("All Stored Tasks: ", allTasks);
+    } catch (e) {
+      console.error("Error logging all stored tasks:", e);
+    }
+  };
 
   const navItem = {
-    Complete: { value: completed.length, color: "green" },
-    ToDo: { value: toDo.length, color: "blue" },
-    Progress: { value: progress.length, color: "orange" },
-    Wait: { value: wait.length, color: "purple" },
+    Complete: { value: completed.length, color: "#fff5d7" },
+    ToDo: { value: toDo.length, color: "#ff5e6c" },
+    Progress: { value: progress.length, color: "#feb300" },
+    Wait: { value: wait.length, color: "#ffaaab" },
   };
 
   const navItemArray = useMemo(
@@ -49,29 +80,35 @@ export default function ToDo() {
   const addTask = () => {
     if (taskInput.trim() !== "") {
       const newTask = new Task(taskInput, new Date(), "ToDo", [], descriptionInput);
-      console.log("New task created:", newTask); // Log the new task
-      setTasks([...tasks, newTask]);
+      console.log("New task created:", newTask);
+      const updatedTasks = [...tasks, newTask];
+      setTasks(updatedTasks);
+      saveTasks(updatedTasks);
       setTaskInput("");
+      setDescriptionInput("");
     } else {
       alert("Must add task");
     }
   };
 
+  const handleItemPress = (key) => {
+    setSelectedItem(key);
+  };
+
   const Item = ({ item }) => (
-    <View style={styles.itemContainer}>
-      <Text style={styles.item}>{item.key}</Text>
+    <TouchableOpacity onPress={() => handleItemPress(item.key)} style={[styles.itemContainer, selectedItem === item.key && styles.selectedItemContainer]}>
+      <Text style={[styles.item, selectedItem === item.key && styles.selectedItem]}>{item.key}</Text>
       <View style={[styles.itemInt, { backgroundColor: item.color }]}>
         <Text style={styles.font}>{item.value}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
-
   return (
     <View style={styles.container}>
       <View style={styles.nav}>
         <Text style={styles.title}>Task List</Text>
         <TouchableOpacity onPress={handlePress}>
-          <Text style={[styles.add]}>Add Task</Text>
+          <Text style={styles.add}>Add Task</Text>
         </TouchableOpacity>
       </View>
 
@@ -114,6 +151,10 @@ export default function ToDo() {
     </View>
   );
 }
+
+
+        
+
 
 const styles = StyleSheet.create({
   container: {
@@ -175,12 +216,19 @@ const styles = StyleSheet.create({
     width: "auto",
     height: 38,
     marginHorizontal: 10,
-    borderWidth: 2,
+    borderWidth: 1.3,
     borderRadius: 20,
+  },
+  selectedItemContainer: {
+    backgroundColor: "black",
   },
   item: {
     display: "flex",
     marginRight: 9,
+    color: "black",
+  },
+  selectedItem: {
+    color: "white",
   },
   itemInt: {
     alignItems: "center",
@@ -191,7 +239,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   font: {
-    color: "white",
+    color: "black",
   },
   list: {
     display: "flex",
