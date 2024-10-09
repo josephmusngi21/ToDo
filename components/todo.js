@@ -26,8 +26,8 @@ export default function ToDo() {
     try {
       const jsonValue = JSON.stringify(tasks);
       await AsyncStorage.setItem('tasks', jsonValue);
-      console.log("Tasks saved: ", jsonValue);
-      logAllStoredTasks();
+      console.log("Tasks saved: ", jsonValue); // Log saved tasks
+      await logAllStoredTasks(); // Log all stored tasks
     } catch (e) {
       console.error("Error saving tasks:", e);
     }
@@ -36,11 +36,11 @@ export default function ToDo() {
   const loadTasks = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem('tasks');
-      console.log("Tasks loaded from storage: ", jsonValue); 
+      console.log("Tasks loaded from storage: ", jsonValue); // Log loaded tasks
       if (jsonValue != null) {
-        const loadedTasks = JSON.parse(jsonValue);
-        console.log("Parsed loaded tasks: ", loadedTasks);
-        setTasks(loadedTasks);
+        const parsedTasks = JSON.parse(jsonValue).map(task => new Task(task.task, new Date(task.date), task.type, task.tags, task.description));
+        console.log("Parsed loaded tasks: ", parsedTasks); // Log parsed tasks
+        setTasks(parsedTasks);
       }
     } catch (e) {
       console.error("Error loading tasks:", e);
@@ -50,11 +50,14 @@ export default function ToDo() {
   const logAllStoredTasks = async () => {
     try {
       const allTasks = await AsyncStorage.getItem('tasks');
-      console.log("All Stored Tasks: ", allTasks);
+      console.log("All Stored Tasks: ", allTasks); // Log all tasks stored in AsyncStorage
     } catch (e) {
       console.error("Error logging all stored tasks:", e);
     }
   };
+
+  const date = new Date();
+  console.log(date);
 
   const navItem = {
     Complete: { value: completed.length, color: "#fff5d7" },
@@ -85,7 +88,7 @@ export default function ToDo() {
       setTasks(updatedTasks);
       saveTasks(updatedTasks);
       setTaskInput("");
-      setDescriptionInput("");
+      setDescriptionInput(""); // Clear description input after adding task
     } else {
       alert("Must add task");
     }
@@ -103,6 +106,7 @@ export default function ToDo() {
       </View>
     </TouchableOpacity>
   );
+
   return (
     <View style={styles.container}>
       <View style={styles.nav}>
@@ -140,7 +144,7 @@ export default function ToDo() {
           <FlatList
             data={tasks}
             renderItem={({ item }) => (
-              <TaskBox taskText={item} key={item.showTask()} />
+              <TaskBox taskText={item} key={item.showTask()} setTasks={setTasks} tasks={tasks}/>
             )}
             keyExtractor={(item, index) => index.toString()}
           />
@@ -151,6 +155,7 @@ export default function ToDo() {
     </View>
   );
 }
+
 
 
         
@@ -248,4 +253,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 12,
   },
+
+  taskList: {
+    marginVertical: 20,
+    paddingVertical: 20,
+    borderRadius: 20,
+    borderWidth: 2,
+    height: 690,
+    overflow: 'hidden',
+  }
 });
