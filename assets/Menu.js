@@ -3,17 +3,18 @@ import { View, StyleSheet, TextInput, TouchableOpacity, Text } from "react-nativ
 import Task from "./task";
 
 export default function Menu({ taskInput, setTaskInput, setTasks, tasks, descriptionInput, setDescriptionInput }) {    
-    const addTask = useCallback(() => {
-        if (taskInput.trim() !== "" && descriptionInput.trim() !== "") {
-            const newTask = new Task(taskInput, new Date(), "Progress", ["+"], descriptionInput); // Correctly assign description
-            console.log(newTask.toString());
-            setTasks([...tasks, newTask]);
-            setTaskInput("");
-            setDescriptionInput("");
+    const addTask = () => {
+        if (taskInput.trim() !== "") {
+          const newTask = new Task(taskInput, new Date(), "ToDo", [], descriptionInput);
+          const updatedTasks = [...tasks, newTask];
+          setTasks(updatedTasks);
+          saveTasks(updatedTasks);
+          setTaskInput("");
+          setDescriptionInput("");
         } else {
-            alert("Must add task and description");
+          alert("Must add task");
         }
-    }, [taskInput, descriptionInput, tasks, setTasks, setTaskInput, setDescriptionInput]);
+      };
 
     return (
         <View style={styles.menuContainer}>
