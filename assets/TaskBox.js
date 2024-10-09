@@ -1,3 +1,5 @@
+//TODO: Need to make it so when you delete a task it will also delete it from the local storage, 
+//TODO: when changing task type it will add it to the corresponding type on navList
 import React, { useState } from "react";
 import {
   View,
@@ -6,14 +8,15 @@ import {
   FlatList,
   TextInput,
   StyleSheet,
-  ScrollView
+  ScrollView,
 } from "react-native";
 
-export default function TaskBox({ taskText }) {
+export default function TaskBox({ taskText, tasks,setTasks }) {
   const [tags, setTags] = useState(taskText?.showAllTags() || []);
   const [showInput, setShowInput] = useState(false);
   const [newTag, setNewTag] = useState("");
   const [lastPressed, setLastPressed] = useState({ tag: "", time: 0 });
+  const [taskMenu, setTaskMenu] = useState(false);
 
   const taskName = taskText?.showTask() || "No Task";
   const date = taskText?.showDate() || new Date().toString();
@@ -30,16 +33,17 @@ export default function TaskBox({ taskText }) {
   const handleTagPress = (tag) => {
     const now = Date.now();
     if (lastPressed.tag === tag && now - lastPressed.time < 300) {
-      // Remove the tag if pressed twice within 300ms
-      setTags(tags.filter(t => t !== tag));
+      setTags(tags.filter((t) => t !== tag));
     } else {
-      // Update last pressed tag and timestamp
       setLastPressed({ tag, time: now });
     }
   };
 
   const normalTag = (item) => (
-    <TouchableOpacity style={styles.tagBubble} onPress={() => handleTagPress(item)}>
+    <TouchableOpacity
+      style={styles.tagBubble}
+      onPress={() => handleTagPress(item)}
+    >
       <Text style={styles.tagText}>{item}</Text>
     </TouchableOpacity>
   );
@@ -74,33 +78,76 @@ export default function TaskBox({ taskText }) {
     </View>
   );
 
+  const handlePress = () => {
+    setTaskMenu(!taskMenu);
+  };
+
+  
+  const updateTaskType = (newType) => {
+    taskText.type = newType;
+    setTasks([...tasks]);
+    setTaskMenu(false);
+  };
+
+  const deleteTask = () => {
+    setTasks(tasks.filter(task => task !== taskText));
+  };
+  const menuOptions = () => (
+    <View style={styles.menuOption}>
+      <TouchableOpacity onPress={handlePress}>
+        <Text style={styles.option}>...</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => updateTaskType('Complete')}>
+        <Text style={styles.option}>Complete</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => updateTaskType('ToDo')}>
+        <Text style={styles.option}>ToDo</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => updateTaskType('Progress')}>
+        <Text style={styles.option}>Progress</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => updateTaskType('Wait')}>
+        <Text style={styles.option}>Wait</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={deleteTask}>
+        <Text style={styles.option}>Delete</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
   return (
     <View style={styles.taskContainer}>
-      <View style={styles.taskNav}>
-        <Text style={styles.taskText}>{taskName}</Text>
-        <View style={styles.menuContainer}>
-          <TouchableOpacity>
-            <Text style={styles.menu}>...</Text>
-          </TouchableOpacity>
+      <View style={styles.mainContainer}>
+        <View style={styles.taskNav}>
+          <Text style={styles.taskText}>{taskName}</Text>
+        </View>
+
+        <ScrollView style={styles.descriptionContainer}>
+          <Text style={styles.description}>{description}</Text>
+        </ScrollView>
+
+        <View style={styles.tagsContainer}>
+          {tags.length > 0 ? (
+            showTags()
+          ) : (
+            <View style={styles.tagBubble}>
+              <Text style={styles.tagText}>No Tags</Text>
+            </View>
+          )}
+        </View>
+
+        <View style={styles.footer}>
+          <Text>{date}</Text>
         </View>
       </View>
-
-      <ScrollView style={styles.descriptionContainer}>
-        <Text style={styles.description}>{description}</Text>
-      </ScrollView>
-
-      <View style={styles.tagsContainer}>
-        {tags.length > 0 ? (
-          showTags()
+      <View style={styles.menuContainer}>
+        {taskMenu ? (
+          <View>{menuOptions()}</View>
         ) : (
-          <View style={styles.tagBubble}>
-            <Text style={styles.tagText}>No Tags</Text>
-          </View>
+          <TouchableOpacity onPress={handlePress}>
+            <Text style={styles.menu}>...</Text>
+          </TouchableOpacity>
         )}
-      </View>
-
-      <View style={styles.footer}>
-        <Text>{date}</Text>
       </View>
     </View>
   );
@@ -108,12 +155,12 @@ export default function TaskBox({ taskText }) {
 
 const styles = StyleSheet.create({
   taskText: {
-    fontWeight: 'bold',
-    fontSize: 16
-  }, 
+    fontWeight: "bold",
+    fontSize: 16,
+  },
   taskContainer: {
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "row",
     justifyContent: "space-between",
     marginHorizontal: 11,
     marginVertical: 12,
@@ -165,6 +212,17 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    fontWeight: '450'
+    fontWeight: 450,
+  },
+
+  menuOption: {
+    height: "100%",
+    justifyContent: 'space-between',
+    paddingHorizontal: 5,
+  },
+
+  option: {
+    fontWeight: 450,
+    textAlign: 'right',
   }
 });
