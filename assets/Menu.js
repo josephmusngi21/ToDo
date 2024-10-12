@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, TextInput, TouchableOpacity, Text } from "react-native";
 import Task from "./task";
 
-export default function Menu({ taskInput, setTaskInput, setTasks, tasks, descriptionInput, setDescriptionInput }) {    
+export default function Menu({ taskInput, setTaskInput, setTasks, tasks, descriptionInput, setDescriptionInput, saveTasks }) {    
     const addTask = () => {
         if (taskInput.trim() !== "") {
           const newTask = new Task(taskInput, new Date(), "ToDo", [], descriptionInput);

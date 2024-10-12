@@ -125,6 +125,7 @@ export default function ToDo() {
           setTasks={setTasks}
           descriptionInput={descriptionInput}
           setDescriptionInput={setDescriptionInput}
+          saveTasks={saveTasks}
         />
       ) : (
         <View></View>
