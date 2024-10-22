@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage"; // Ensure correct import
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Menu from "../assets/Menu";
 import TaskBox from "../assets/TaskBox";
 import Task from "../assets/task";
@@ -36,10 +36,10 @@ export default function ToDo() {
   const loadTasks = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem('tasks');
-      console.log("Tasks loaded from storage: ", jsonValue); // Log loaded tasks
+      console.log("Tasks loaded from storage: ", jsonValue); 
       if (jsonValue != null) {
         const parsedTasks = JSON.parse(jsonValue).map(task => new Task(task.task, new Date(task.date), task.type, task.tags, task.description));
-        console.log("Parsed loaded tasks: ", parsedTasks); // Log parsed tasks
+        console.log("Parsed loaded tasks: ", parsedTasks);
         setTasks(parsedTasks);
       }
     } catch (e) {
@@ -50,7 +50,7 @@ export default function ToDo() {
   const logAllStoredTasks = async () => {
     try {
       const allTasks = await AsyncStorage.getItem('tasks');
-      console.log("All Stored Tasks: ", allTasks); // Log all tasks stored in AsyncStorage
+      console.log("All Stored Tasks: ", allTasks);
     } catch (e) {
       console.error("Error logging all stored tasks:", e);
     }
@@ -88,7 +88,7 @@ export default function ToDo() {
       setTasks(updatedTasks);
       saveTasks(updatedTasks);
       setTaskInput("");
-      setDescriptionInput(""); // Clear description input after adding task
+      setDescriptionInput("");
     } else {
       alert("Must add task");
     }
