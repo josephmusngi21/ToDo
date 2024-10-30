@@ -88,7 +88,7 @@ export default function ToDo() {
       setTasks(updatedTasks);
       saveTasks(updatedTasks);
       setTaskInput("");
-      setDescriptionInput("");
+      setDescriptionInput("");  
     } else {
       alert("Must add task");
     }
